@@ -3,7 +3,7 @@ import ProgressRing from '../components/ProgressRing.jsx';
 import WeekStrip from '../components/WeekStrip.jsx';
 import EntryRow from '../components/EntryRow.jsx';
 import AddProteinModal from '../components/AddProteinModal.jsx';
-import Character, { getStage, STAGES } from '../components/Character.jsx';
+import { getStage, STAGES } from '../components/Character.jsx';
 import { Plus, Flame, Gear } from '../icons.jsx';
 import { dayTotal, computeStreak, ymd, parseYmd, monthLabel } from '../storage.js';
 
@@ -89,27 +89,25 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
         <WeekStrip selected={selected} onSelect={setSelected} />
       </div>
 
-      {/* HERO CARD — character + ring with stage-colored gradient bg */}
+      {/* HERO CARD — ring is the hero */}
       <div className="px-4 mt-5">
-        <div className={`${meta.hero} hero-glow rounded-[28px] px-5 pt-6 pb-7 relative overflow-hidden`}>
-          {/* decorative blur blobs in the corner */}
-          <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/20 blur-2xl"/>
-          <div className="absolute -bottom-12 -left-12 w-40 h-40 rounded-full bg-black/15 blur-2xl"/>
+        <div className={`${meta.hero} hero-glow rounded-[28px] px-5 pt-10 pb-8 relative overflow-hidden`}>
+          {/* decorative blur blobs */}
+          <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/25 blur-3xl"/>
+          <div className="absolute -bottom-14 -left-14 w-48 h-48 rounded-full bg-black/20 blur-3xl"/>
 
-          <div className="relative flex justify-center">
-            <Character pct={pct}/>
-          </div>
-
-          <div className="relative flex justify-center mt-2 animate-pop">
+          <div className="relative flex justify-center animate-pop">
             <ProgressRing
               value={total}
               goal={goal}
               onGoalChange={(g) => update({ goal: g })}
+              stage={stage}
+              stageName={meta.name}
             />
             <div className="absolute top-0 left-1/2 w-0 h-0">
               {pops.map((p) => (
                 <div key={p.id} className="float-pop"
-                     style={{ fontSize: p.isLvl ? 14 : 26, color: p.isLvl ? '#fde047' : '#fff' }}>
+                     style={{ fontSize: p.isLvl ? 14 : 28, color: p.isLvl ? '#fde047' : '#fff' }}>
                   {p.isLvl ? p.value : `+${p.value}g`}
                 </div>
               ))}
@@ -117,10 +115,10 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
           </div>
 
           {!goalUnset && (
-            <div className="relative text-center mt-3 text-[13px] text-white/85 font-medium">
+            <div className="relative text-center mt-6 text-[14px] text-white/90 font-semibold">
               {remaining > 0
-                ? <>still need <span className="num font-bold text-white">{remaining}g</span></>
-                : <>🎉 goal hit · <span className="num font-bold text-white">+{total - goal}g</span> over</>
+                ? <>still need <span className="num font-extrabold text-white">{remaining}g</span> to level up</>
+                : <>🎉 goal hit · <span className="num font-extrabold text-white">+{total - goal}g</span> over</>
               }
             </div>
           )}

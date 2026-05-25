@@ -4,13 +4,13 @@ import React from 'react';
 // Face = 1-pixel eyes + tiny mouth so it never looks like a beard.
 
 export const STAGES = [
-  { id: 0, name: 'Lil Egg',       quote: 'zzz... feed me',     hero: 'bg-hero-stage-0' },
-  { id: 1, name: 'Newbie',        quote: "let's start",        hero: 'bg-hero-stage-1' },
-  { id: 2, name: 'Getting There', quote: 'gains incoming',     hero: 'bg-hero-stage-2' },
-  { id: 3, name: 'Buff Bro',      quote: 'flex check 💪',      hero: 'bg-hero-stage-3' },
-  { id: 4, name: 'Mega Lifter',   quote: 'one more rep',       hero: 'bg-hero-stage-4' },
-  { id: 5, name: 'Champion',      quote: 'GOAL HIT!',          hero: 'bg-hero-stage-5' },
-  { id: 6, name: 'BEAST MODE',    quote: 'unstoppable 🔥',     hero: 'bg-hero-stage-6' },
+  { id: 0, name: 'SLEEPING',  quote: 'zzz... feed me',     hero: 'bg-hero-stage-0' },
+  { id: 1, name: 'WAKING UP', quote: "let's start",        hero: 'bg-hero-stage-1' },
+  { id: 2, name: 'BUILDING',  quote: 'gains incoming',     hero: 'bg-hero-stage-2' },
+  { id: 3, name: 'GAINING',   quote: 'flex check',         hero: 'bg-hero-stage-3' },
+  { id: 4, name: 'GRINDING',  quote: 'one more rep',       hero: 'bg-hero-stage-4' },
+  { id: 5, name: 'GOAL HIT',  quote: 'crushed it',         hero: 'bg-hero-stage-5' },
+  { id: 6, name: 'BEAST MODE', quote: 'unstoppable 🔥',    hero: 'bg-hero-stage-6' },
 ];
 
 export function getStage(pct) {
