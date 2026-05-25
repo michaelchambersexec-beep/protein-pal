@@ -86,7 +86,7 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
 
       {/* Week strip */}
       <div className="px-3 mt-4">
-        <WeekStrip selected={selected} onSelect={setSelected} />
+        <WeekStrip selected={selected} onSelect={setSelected} state={state} goal={goal} />
       </div>
 
       {/* HERO CARD — ring is the hero */}
