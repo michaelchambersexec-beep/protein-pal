@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  background: #0a0a0a;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  overscroll-behavior-y: none;
+}
+
+* { box-sizing: border-box; }
+
+input, button, select, textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+input:focus, button:focus, select:focus, textarea:focus {
+  outline: none;
+}
+
+button { cursor: pointer; }
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Progress ring stroke animation */
+.ring-progress {
+  transition: stroke-dashoffset 700ms cubic-bezier(0.22, 1, 0.36, 1),
+              stroke 250ms ease;
+}
+
+/* Tab switch fade */
+.tab-fade { animation: fadeIn 220ms ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Modal backdrop */
+.backdrop { animation: fadeBg 220ms ease-out; }
+@keyframes fadeBg { from { background: rgba(0,0,0,0); } to { background: rgba(0,0,0,0.6); } }
+
+/* Character idle bob */
+.character-bob { animation: bob 2.4s ease-in-out infinite; }
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-4px) rotate(1deg); }
+}
+
+/* Aura pulse */
+.character-aura { animation: aurapulse 2s ease-in-out infinite; }
+@keyframes aurapulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.12); }
+}
+
+/* Floating +Xg damage number */
+.float-pop {
+  position: absolute;
+  pointer-events: none;
+  font-weight: 800;
+  color: #5b8dee;
+  text-shadow: 0 2px 8px rgba(91,141,238,0.6), 0 0 1px #000;
+  animation: floatpop 1100ms ease-out forwards;
+}
+@keyframes floatpop {
+  0%   { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+  20%  { transform: translate(-50%, -10px) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -90px) scale(1); opacity: 0; }
+}
+
+/* Goal-hit confetti */
+.confetti-piece {
+  position: absolute;
+  width: 8px; height: 14px;
+  top: 50%; left: 50%;
+  border-radius: 2px;
+  animation: confetti 1100ms ease-out forwards;
+}
+@keyframes confetti {
+  0%   { transform: translate(-50%, -50%) rotate(0) scale(0.4); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) rotate(720deg) scale(1); opacity: 0; }
+}
+
+/* Button press squish */
+.pressable { transition: transform 120ms ease; }
+.pressable:active { transform: scale(0.94); }
+
+/* Goal-hit screen glow */
+.goal-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 50% 30%, rgba(251,191,36,0.18), transparent 55%);
+  animation: glowpulse 1600ms ease-out forwards;
+}
+@keyframes glowpulse {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
