@@ -78,17 +78,10 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
           <div className="eyebrow text-white/60">{isToday ? 'today' : selectedDate.toLocaleDateString(undefined, { weekday: 'long' })}</div>
           <h1 className="text-[26px] leading-none font-bold tracking-tight mt-2">{monthLabel(selectedDate)}</h1>
         </div>
-        <div className="flex items-center gap-2">
-          <div className={'flex items-center gap-1.5 rounded-full px-3 py-1.5 transition ' +
-            (streak > 0 ? 'bg-gradient-to-r from-orange to-coral text-white shadow-lg shadow-orange/30' : 'bg-white/8 text-white/60 border border-white/10')}>
-            <Flame size={14}/>
-            <span className="num text-[12px] font-bold">{streak}</span>
-          </div>
-          <button onClick={onOpenSettings}
-            className="pressable w-10 h-10 rounded-full bg-white/8 border border-white/10 flex items-center justify-center text-white/80">
-            <Gear size={16}/>
-          </button>
-        </div>
+        <button onClick={onOpenSettings}
+          className="pressable w-10 h-10 rounded-full bg-white/8 border border-white/10 flex items-center justify-center text-white/80">
+          <Gear size={16}/>
+        </button>
       </header>
 
       {/* Week strip */}
