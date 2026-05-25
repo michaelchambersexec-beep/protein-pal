@@ -3,6 +3,38 @@ import { X, Search, Camera, Plus, Star, Trash } from '../icons.jsx';
 import { FOOD_DATABASE } from '../foodDatabase.js';
 import { uid } from '../storage.js';
 
+// Helpers hoisted OUT of the component — defining them inside re-creates
+// the component on every render and the inputs lose focus after each keystroke.
+const Input = (props) => (
+  <input {...props}
+    className={'bg-raised rounded-md px-3 py-2.5 text-[14px] text-ink placeholder:text-ink3 ' + (props.className || '')}/>
+);
+
+const Empty = ({ msg }) => (
+  <div className="text-center text-ink3 text-[13px] py-14 px-4">{msg}</div>
+);
+
+const Row = ({ name, protein, onAdd, right }) => (
+  <div className="flex items-center gap-3 py-3 border-b border-line">
+    <div className="flex-1 min-w-0">
+      <div className="text-[14px] text-ink truncate">{name}</div>
+      <div className="num text-[11px] text-ink3 mt-0.5">{protein}g</div>
+    </div>
+    {right}
+    <button onClick={onAdd}
+      className="pressable w-10 h-10 rounded-full text-white flex items-center justify-center shadow-md"
+      style={{ background: 'linear-gradient(135deg, #a78bfa, #ec4899)' }}>
+      <PlusIcon/>
+    </button>
+  </div>
+);
+
+const PlusIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+  </svg>
+);
+
 const TABS = [
   { id: 'RECENTS',   bg: 'linear-gradient(135deg, #a78bfa, #6366f1)' },
   { id: 'FAVORITES', bg: 'linear-gradient(135deg, #fde047, #fb923c)' },
@@ -110,30 +142,6 @@ export default function AddProteinModal({ open, onClose, state, update, dateStr 
     onClose?.();
   };
   const deleteMeal = (id) => update((s) => ({ ...s, myMeals: s.myMeals.filter((m) => m.id !== id) }));
-
-  const Empty = ({ msg }) => (
-    <div className="text-center text-ink3 text-[13px] py-14 px-4">{msg}</div>
-  );
-
-  const Row = ({ name, protein, onAdd, right }) => (
-    <div className="flex items-center gap-3 py-3 border-b border-line">
-      <div className="flex-1 min-w-0">
-        <div className="text-[14px] text-ink truncate">{name}</div>
-        <div className="num text-[11px] text-ink3 mt-0.5">{protein}g</div>
-      </div>
-      {right}
-      <button onClick={onAdd}
-        className="pressable w-10 h-10 rounded-full text-white flex items-center justify-center shadow-md"
-        style={{ background: 'linear-gradient(135deg, #a78bfa, #ec4899)' }}>
-        <Plus size={16}/>
-      </button>
-    </div>
-  );
-
-  const Input = (props) => (
-    <input {...props}
-      className={'bg-raised rounded-md px-3 py-2.5 text-[14px] text-ink placeholder:text-ink3 ' + (props.className || '')}/>
-  );
 
   return (
     <div className="fixed inset-0 z-50 backdrop flex items-end" onClick={onClose}>
