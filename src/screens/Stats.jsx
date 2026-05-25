@@ -36,7 +36,7 @@ export default function Stats({ state }) {
   const hitDays = totals.filter((t) => goal > 0 && t >= goal).length;
 
   return (
-    <div className="flex flex-col h-full pb-32 px-6 pt-7">
+    <div className="flex flex-col h-full pb-32 px-6 pt-7" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 1.75rem)' }}>
       <header className="flex items-end justify-between">
         <div>
           <div className="eyebrow">summary</div>

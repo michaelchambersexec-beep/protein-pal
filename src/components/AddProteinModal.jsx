@@ -143,7 +143,7 @@ export default function AddProteinModal({ open, onClose, state, update, dateStr 
         onClick={(e) => e.stopPropagation()}
       >
         {/* Grab handle */}
-        <div className="flex justify-center pt-2.5 pb-1">
+        <div className="flex justify-center pt-2.5 pb-1" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.625rem)' }}>
           <div className="w-9 h-1 rounded-full bg-ink4"/>
         </div>
 

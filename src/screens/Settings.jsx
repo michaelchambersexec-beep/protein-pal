@@ -63,7 +63,7 @@ export default function Settings({ open, onClose, state, update }) {
         style={{ height: '92vh' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-center pt-2.5 pb-1">
+        <div className="flex justify-center pt-2.5 pb-1" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.625rem)' }}>
           <div className="w-9 h-1 rounded-full bg-ink4"/>
         </div>
         <div className="flex items-center justify-between px-6 pt-2 pb-4">

@@ -62,7 +62,7 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
   });
 
   return (
-    <div className="flex flex-col h-full pb-40 relative">
+    <div className="flex flex-col h-full pb-40 relative pt-[env(safe-area-inset-top)]">
       {confettiKey && <Confetti seed={confettiKey} />}
       {confettiKey && <div className="goal-glow" />}
 
@@ -161,15 +161,19 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
         )}
       </div>
 
-      {/* FAB */}
-      <button
-        onClick={() => setModal(true)}
-        className="pressable fixed bottom-24 right-1/2 translate-x-[185px] w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl"
-        style={{ background: 'linear-gradient(135deg, #a78bfa, #ec4899)', boxShadow: '0 12px 36px -8px rgba(168,139,250,0.6)' }}
-        aria-label="Add protein"
-      >
-        <Plus size={26} strokeWidth={2.6}/>
-      </button>
+      {/* FAB — container-relative so it lands inside the 430px max-width on any viewport */}
+      <div className="fixed bottom-0 inset-x-0 pointer-events-none z-40" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="max-w-app mx-auto relative h-0">
+          <button
+            onClick={() => setModal(true)}
+            className="pressable pointer-events-auto absolute right-5 -bottom-[6.25rem] w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl"
+            style={{ background: 'linear-gradient(135deg, #a78bfa, #ec4899)', boxShadow: '0 12px 36px -8px rgba(168,139,250,0.6)' }}
+            aria-label="Add protein"
+          >
+            <Plus size={26} strokeWidth={2.6}/>
+          </button>
+        </div>
+      </div>
 
       <AddProteinModal
         open={modal}
