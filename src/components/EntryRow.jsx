@@ -35,35 +35,32 @@ export default function EntryRow({ entry, onDelete }) {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-xl select-none">
-      <button
-        onClick={onDelete}
-        className="absolute top-0 right-0 h-full px-5 bg-danger flex items-center text-white"
-        style={{ width: 80 }}
-        aria-label="Delete entry"
-      >
-        <Trash size={20}/>
+    <div className="relative overflow-hidden select-none border-b border-white/8 last:border-0">
+      <button onClick={onDelete}
+        className="absolute top-0 right-0 h-full px-5 bg-coral/95 flex items-center text-white"
+        style={{ width: 80 }} aria-label="Delete entry">
+        <Trash size={18}/>
       </button>
       <div
-        className="relative bg-card flex items-center gap-3 px-4 py-3"
-        style={{ transform: `translateX(${dx}px)`, transition: swiping.current ? 'none' : 'transform 180ms ease' }}
+        className="relative flex items-center gap-3 px-4 py-3.5 bg-transparent"
+        style={{ transform: `translateX(${dx}px)`, transition: swiping.current ? 'none' : 'transform 220ms cubic-bezier(0.34,1.56,0.64,1)' }}
         onTouchStart={onStart} onTouchMove={onMove} onTouchEnd={onEnd} onTouchCancel={onEnd}
-        onMouseDown={onStart}
-        onMouseMove={onMove}
-        onMouseUp={onEnd}
-        onMouseLeave={onEnd}
+        onMouseDown={onStart} onMouseMove={onMove} onMouseUp={onEnd} onMouseLeave={onEnd}
         onClick={onRowClick}
       >
-        <div className="w-9 h-9 rounded-full bg-accent/15 text-accent flex items-center justify-center shrink-0">
-          <Bolt size={18}/>
+        <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-white shadow-md"
+             style={{ background: 'linear-gradient(135deg, #a78bfa, #ec4899)' }}>
+          <Bolt size={16}/>
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-medium truncate">{entry.name}</div>
-          <div className="text-xs text-muted">
+          <div className="text-[14px] font-semibold text-white truncate">{entry.name}</div>
+          <div className="num text-[11px] text-white/55 mt-0.5">
             {new Date(entry.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
           </div>
         </div>
-        <div className="text-base font-semibold tabular-nums">{entry.protein}<span className="text-xs text-muted font-normal">g</span></div>
+        <div className="num text-[18px] font-bold text-white tracking-tight">
+          {entry.protein}<span className="text-[11px] text-white/55 font-normal ml-0.5">g</span>
+        </div>
       </div>
     </div>
   );

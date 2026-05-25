@@ -26,42 +26,57 @@ export default function ProgressRing({ value, goal, onGoalChange }) {
   return (
     <div className="relative flex flex-col items-center justify-center select-none" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size/2} cy={size/2} r={r} stroke="#222" strokeWidth={stroke} fill="none" />
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"  stopColor="#fde047"/>
+            <stop offset="50%" stopColor="#fb7185"/>
+            <stop offset="100%" stopColor="#a78bfa"/>
+          </linearGradient>
+          <linearGradient id="ringGradHit" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"  stopColor="#86efac"/>
+            <stop offset="100%" stopColor="#34d399"/>
+          </linearGradient>
+        </defs>
+        {/* track */}
+        <circle cx={size/2} cy={size/2} r={r}
+          stroke="rgba(255,255,255,0.14)" strokeWidth={stroke} fill="none"/>
+        {/* progress */}
         <circle
           className="ring-progress"
           cx={size/2} cy={size/2} r={r}
-          stroke={hit ? '#4ade80' : '#5b8dee'}
+          stroke={hit ? 'url(#ringGradHit)' : 'url(#ringGrad)'}
           strokeWidth={stroke}
           strokeLinecap="round"
           fill="none"
           strokeDasharray={c}
           strokeDashoffset={dashoffset}
+          style={{ filter: `drop-shadow(0 0 14px ${hit ? 'rgba(134,239,172,0.5)' : 'rgba(251,113,133,0.4)'})` }}
         />
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-5xl font-bold tabular-nums">{Math.round(value)}<span className="text-lg font-medium text-muted">g</span></div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+        <div className="num text-[60px] leading-none font-extrabold tracking-tight">
+          {Math.round(value)}
+          <span className="text-base font-medium opacity-70 ml-1">g</span>
+        </div>
         {editing ? (
-          <div className="mt-1 flex items-center gap-1">
-            <span className="text-muted text-sm">of</span>
-            <input
-              autoFocus
-              type="number"
-              inputMode="numeric"
-              value={draft}
+          <div className="mt-2 flex items-center gap-1.5">
+            <span className="text-white/70 text-xs">of</span>
+            <input autoFocus type="number" inputMode="numeric" value={draft}
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') save(); if (e.key === 'Escape') setEditing(false); }}
-              className="w-16 bg-card2 rounded px-2 py-0.5 text-sm text-center"
-            />
-            <button onClick={save} className="text-accent"><Check size={18}/></button>
-            <button onClick={() => setEditing(false)} className="text-muted"><X size={18}/></button>
+              className="num w-16 bg-white/15 backdrop-blur rounded px-2 py-0.5 text-xs text-center text-white"/>
+            <button onClick={save} className="text-white"><Check size={16}/></button>
+            <button onClick={() => setEditing(false)} className="text-white/70"><X size={16}/></button>
           </div>
         ) : (
-          <button onClick={() => setEditing(true)} className="mt-1 flex items-center gap-1 text-sm text-muted hover:text-white transition">
-            <span>of {goal || 0}g</span>
-            <Pencil size={14} />
+          <button onClick={() => setEditing(true)} className="mt-1.5 flex items-center gap-1.5 text-xs text-white/80 hover:text-white transition">
+            <span className="num">of {goal || 0}g</span>
+            <Pencil size={12}/>
           </button>
         )}
-        <div className="mt-1 text-xs text-muted">{goal > 0 ? Math.round(pct * 100) : 0}%</div>
+        <div className="num mt-1 text-[10px] tracking-[0.18em] uppercase text-white/70 font-semibold">
+          {goal > 0 ? Math.round(pct * 100) : 0}%
+        </div>
       </div>
     </div>
   );

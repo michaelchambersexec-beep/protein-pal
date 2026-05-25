@@ -2,6 +2,11 @@ import React, { useMemo, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer, Cell } from 'recharts';
 import { ymd, addDays, dayTotal, computeStreak, longestStreak } from '../storage.js';
 
+const INK   = '#ffffff';
+const INK3  = 'rgba(255,255,255,0.55)';
+const MUTED = 'rgba(255,255,255,0.15)';
+const HIT_GRAD_ID = 'barHitGrad';
+
 export default function Stats({ state }) {
   const [range, setRange] = useState(7);
 
@@ -14,7 +19,7 @@ export default function Stats({ state }) {
       out.push({
         date: key,
         label: range === 7
-          ? d.toLocaleDateString(undefined, { weekday: 'short' })
+          ? d.toLocaleDateString(undefined, { weekday: 'short' })[0]
           : `${d.getMonth() + 1}/${d.getDate()}`,
         protein: dayTotal(state, key),
       });
@@ -28,59 +33,86 @@ export default function Stats({ state }) {
   const best = totals.length ? Math.max(...totals) : 0;
   const cur = computeStreak(state);
   const longest = longestStreak(state);
+  const hitDays = totals.filter((t) => goal > 0 && t >= goal).length;
 
   return (
-    <div className="flex flex-col h-full pb-20 px-5 pt-5">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-semibold">Stats</h1>
-        <div className="flex bg-card rounded-full p-1">
+    <div className="flex flex-col h-full pb-32 px-6 pt-7">
+      <header className="flex items-end justify-between">
+        <div>
+          <div className="eyebrow">summary</div>
+          <h1 className="text-[26px] leading-none font-semibold tracking-tight mt-2">Stats</h1>
+        </div>
+        <div className="flex border border-line rounded-full overflow-hidden">
           {[7, 30].map((n) => (
             <button key={n} onClick={() => setRange(n)}
-              className={'px-3 py-1 text-xs rounded-full transition ' + (range === n ? 'bg-accent text-white' : 'text-muted')}
-            >{n}d</button>
+              className={'num px-3 py-1 text-[11px] tracking-wide transition ' +
+                (range === n ? 'bg-ink text-bg' : 'text-ink3')}
+            >{n}D</button>
           ))}
         </div>
+      </header>
+
+      {/* Hit ratio */}
+      <div className="mt-7 flex items-baseline gap-3">
+        <div className="num text-[44px] leading-none font-semibold tracking-tight">{hitDays}<span className="text-[18px] text-ink3 font-normal"> / {range}</span></div>
+        <div className="text-[12px] text-ink3">days goal hit</div>
       </div>
 
-      <div className="bg-card rounded-2xl p-3 h-64">
+      {/* Chart */}
+      <div className="mt-6 h-56">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 6, left: -20, bottom: 0 }}>
-            <XAxis dataKey="label" stroke="#666" fontSize={10} tickLine={false} axisLine={false}
-              interval={range === 30 ? 4 : 0} />
-            <YAxis stroke="#666" fontSize={10} tickLine={false} axisLine={false} />
+          <BarChart data={data} margin={{ top: 12, right: 4, left: -28, bottom: 0 }}>
+            <defs>
+              <linearGradient id={HIT_GRAD_ID} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"  stopColor="#fde047"/>
+                <stop offset="50%" stopColor="#ec4899"/>
+                <stop offset="100%" stopColor="#a78bfa"/>
+              </linearGradient>
+            </defs>
+            <XAxis dataKey="label" stroke={INK3} fontSize={10} tickLine={false} axisLine={false}
+              interval={range === 30 ? 4 : 0}
+              tick={{ fill: INK3 }}/>
+            <YAxis stroke={INK3} fontSize={10} tickLine={false} axisLine={false}
+              tick={{ fill: INK3 }}/>
             <Tooltip
-              cursor={{ fill: '#ffffff10' }}
-              contentStyle={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, fontSize: 12 }}
-              labelStyle={{ color: '#9aa0aa' }}
-              formatter={(v) => [`${v}g`, 'Protein']}
+              cursor={{ fill: 'rgba(255,255,255,0.06)' }}
+              contentStyle={{
+                background: 'oklch(0.16 0.025 280)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: 10, fontSize: 12,
+              }}
+              labelStyle={{ color: INK3 }}
+              itemStyle={{ color: INK, fontWeight: 600 }}
+              formatter={(v) => [`${v}g`, 'protein']}
             />
             {goal > 0 && (
-              <ReferenceLine y={goal} stroke="#5b8dee" strokeDasharray="4 4" strokeOpacity={0.7} ifOverflow="extendDomain" />
+              <ReferenceLine y={goal} stroke="#fde047" strokeDasharray="3 4" strokeOpacity={0.7} ifOverflow="extendDomain"/>
             )}
             <Bar dataKey="protein" radius={[6, 6, 0, 0]}>
               {data.map((d, i) => (
-                <Cell key={i} fill={goal > 0 && d.protein >= goal ? '#5b8dee' : '#3a3a3a'} />
+                <Cell key={i} fill={goal > 0 && d.protein >= goal ? `url(#${HIT_GRAD_ID})` : MUTED} />
               ))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mt-4">
-        <StatCard label={`${range}-day average`} value={`${avg}g`} />
-        <StatCard label="Best day" value={`${best}g`} />
-        <StatCard label="Current streak" value={cur} unit="days" />
-        <StatCard label="Longest streak" value={longest} unit="days" />
+      {/* Summary cards — minimal, borderless rows */}
+      <div className="mt-2 border-t border-line">
+        <StatRow label="Average" value={`${avg}g`}/>
+        <StatRow label="Best day" value={`${best}g`}/>
+        <StatRow label="Current streak" value={`${cur}d`}/>
+        <StatRow label="Longest streak" value={`${longest}d`}/>
       </div>
     </div>
   );
 }
 
-function StatCard({ label, value, unit }) {
+function StatRow({ label, value }) {
   return (
-    <div className="bg-card rounded-2xl p-4">
-      <div className="text-xs text-muted uppercase tracking-wider">{label}</div>
-      <div className="text-2xl font-semibold mt-1 tabular-nums">{value}{unit && <span className="text-sm text-muted font-normal ml-1">{unit}</span>}</div>
+    <div className="flex items-baseline justify-between py-3.5 border-b border-line">
+      <div className="text-[13px] text-ink2">{label}</div>
+      <div className="num text-[20px] font-semibold tracking-tight">{value}</div>
     </div>
   );
 }

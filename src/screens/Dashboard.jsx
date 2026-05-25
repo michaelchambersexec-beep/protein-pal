@@ -3,7 +3,7 @@ import ProgressRing from '../components/ProgressRing.jsx';
 import WeekStrip from '../components/WeekStrip.jsx';
 import EntryRow from '../components/EntryRow.jsx';
 import AddProteinModal from '../components/AddProteinModal.jsx';
-import Character, { getStage } from '../components/Character.jsx';
+import Character, { getStage, STAGES } from '../components/Character.jsx';
 import { Plus, Flame, Gear } from '../icons.jsx';
 import { dayTotal, computeStreak, ymd, parseYmd, monthLabel } from '../storage.js';
 
@@ -18,11 +18,12 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
   const goal = state.goal || 0;
   const pct = goal > 0 ? total / goal : 0;
   const stage = getStage(pct);
+  const meta = STAGES[stage];
+  const remaining = Math.max(0, goal - total);
 
   const goalUnset = goal <= 0;
 
-  // ----- Pop animations -----
-  const [pops, setPops] = useState([]); // {id, value}
+  const [pops, setPops] = useState([]);
   const [confettiKey, setConfettiKey] = useState(null);
   const prevTotalRef = useRef(total);
   const prevHitRef = useRef(goal > 0 && total >= goal);
@@ -38,13 +39,12 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
     const hit = goal > 0 && total >= goal;
     if (hit && !prevHitRef.current) {
       setConfettiKey(Date.now());
-      setTimeout(() => setConfettiKey(null), 1700);
+      setTimeout(() => setConfettiKey(null), 1800);
     }
     prevTotalRef.current = total;
     prevHitRef.current = hit;
   }, [total, goal]);
 
-  // celebrate stage-up too (smaller)
   useEffect(() => {
     if (stage > prevStageRef.current) {
       const id = Date.now() + Math.random();
@@ -62,77 +62,98 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
   });
 
   return (
-    <div className="flex flex-col h-full pb-32 relative">
+    <div className="flex flex-col h-full pb-40 relative">
       {confettiKey && <Confetti seed={confettiKey} />}
       {confettiKey && <div className="goal-glow" />}
 
       {storageWarning && (
-        <div className="mx-4 mt-3 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-xs rounded-lg px-3 py-2">
-          Storage unavailable. Data will only persist in memory for this session.
+        <div className="mx-5 mt-3 border border-yellow/40 bg-yellow/10 text-yellow text-[12px] rounded-xl px-3 py-2">
+          Storage unavailable. Data will only persist in memory.
         </div>
       )}
 
-      <header className="flex items-center justify-between px-5 pt-5 pb-2">
+      {/* Header */}
+      <header className="flex items-end justify-between px-5 pt-7 pb-2">
         <div>
-          <div className="text-xs text-muted uppercase tracking-wider">{isToday ? 'Today' : selectedDate.toLocaleDateString(undefined, { weekday: 'long' })}</div>
-          <h1 className="text-2xl font-semibold">{monthLabel(selectedDate)}</h1>
+          <div className="eyebrow text-white/60">{isToday ? 'today' : selectedDate.toLocaleDateString(undefined, { weekday: 'long' })}</div>
+          <h1 className="text-[26px] leading-none font-bold tracking-tight mt-2">{monthLabel(selectedDate)}</h1>
         </div>
         <div className="flex items-center gap-2">
-          <div className={'flex items-center gap-1 rounded-full px-3 py-1.5 transition ' + (streak > 0 ? 'bg-orange-500/15 border border-orange-400/30' : 'bg-card')}>
-            <Flame size={16} className={streak > 0 ? 'text-orange-400' : 'text-muted'} />
-            <span className={'text-sm font-semibold ' + (streak > 0 ? 'text-orange-300' : '')}>{streak}</span>
+          <div className={'flex items-center gap-1.5 rounded-full px-3 py-1.5 transition ' +
+            (streak > 0 ? 'bg-gradient-to-r from-orange to-coral text-white shadow-lg shadow-orange/30' : 'bg-white/8 text-white/60 border border-white/10')}>
+            <Flame size={14}/>
+            <span className="num text-[12px] font-bold">{streak}</span>
           </div>
-          <button onClick={onOpenSettings} className="text-muted p-1 pressable"><Gear /></button>
+          <button onClick={onOpenSettings}
+            className="pressable w-10 h-10 rounded-full bg-white/8 border border-white/10 flex items-center justify-center text-white/80">
+            <Gear size={16}/>
+          </button>
         </div>
       </header>
 
-      <div className="px-3 mt-1">
+      {/* Week strip */}
+      <div className="px-3 mt-4">
         <WeekStrip selected={selected} onSelect={setSelected} />
       </div>
 
-      {/* Character */}
-      <div className="flex justify-center mt-3">
-        <Character pct={pct} />
-      </div>
+      {/* HERO CARD — character + ring with stage-colored gradient bg */}
+      <div className="px-4 mt-5">
+        <div className={`${meta.hero} hero-glow rounded-[28px] px-5 pt-6 pb-7 relative overflow-hidden`}>
+          {/* decorative blur blobs in the corner */}
+          <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/20 blur-2xl"/>
+          <div className="absolute -bottom-12 -left-12 w-40 h-40 rounded-full bg-black/15 blur-2xl"/>
 
-      {/* Ring + floating pops */}
-      <div className="relative flex justify-center mt-3 animate-pop">
-        <ProgressRing
-          value={total}
-          goal={goal}
-          onGoalChange={(g) => update({ goal: g })}
-        />
-        <div className="absolute top-0 left-1/2 w-0 h-0">
-          {pops.map((p) => (
-            <div key={p.id} className="float-pop"
-                 style={{ fontSize: p.isLvl ? 14 : 24, color: p.isLvl ? '#fbbf24' : '#5b8dee' }}>
-              {p.isLvl ? p.value : `+${p.value}g`}
+          <div className="relative flex justify-center">
+            <Character pct={pct}/>
+          </div>
+
+          <div className="relative flex justify-center mt-2 animate-pop">
+            <ProgressRing
+              value={total}
+              goal={goal}
+              onGoalChange={(g) => update({ goal: g })}
+            />
+            <div className="absolute top-0 left-1/2 w-0 h-0">
+              {pops.map((p) => (
+                <div key={p.id} className="float-pop"
+                     style={{ fontSize: p.isLvl ? 14 : 26, color: p.isLvl ? '#fde047' : '#fff' }}>
+                  {p.isLvl ? p.value : `+${p.value}g`}
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {!goalUnset && (
+            <div className="relative text-center mt-3 text-[13px] text-white/85 font-medium">
+              {remaining > 0
+                ? <>still need <span className="num font-bold text-white">{remaining}g</span></>
+                : <>🎉 goal hit · <span className="num font-bold text-white">+{total - goal}g</span> over</>
+              }
+            </div>
+          )}
         </div>
       </div>
 
       {goalUnset && (
-        <div className="mx-5 mt-4 bg-accent/10 border border-accent/30 rounded-xl px-4 py-3 text-sm">
-          <div className="font-medium mb-1">Set your daily goal</div>
-          <div className="text-muted text-xs mb-2">Tap the pencil under the ring, or open Settings for a bodyweight calculator.</div>
-          <button onClick={onOpenSettings} className="text-accent text-xs font-medium pressable">Open Settings →</button>
+        <div className="mx-5 mt-4 border border-violet/40 bg-violet/15 rounded-2xl px-4 py-3 text-[13px]">
+          <div className="font-semibold">Set your daily goal</div>
+          <div className="text-white/70 text-[12px] mt-1">Tap the pencil under the ring, or open Settings.</div>
         </div>
       )}
 
+      {/* Entries */}
       <div className="px-5 mt-6 flex-1">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-sm font-semibold text-muted uppercase tracking-wider">Entries</h2>
-          <span className="text-xs text-muted">{entries.length}</span>
+        <div className="flex items-baseline justify-between mb-2">
+          <h2 className="eyebrow">today's entries</h2>
+          <span className="num text-[11px] text-white/60">{entries.length}</span>
         </div>
         {entries.length === 0 ? (
-          <div className="bg-card rounded-2xl text-center py-10 px-4">
-            <div className="text-3xl mb-2">💪</div>
-            <div className="text-sm font-medium">Nothing logged yet</div>
-            <div className="text-xs text-muted mt-1">Tap the + to feed your buddy.</div>
+          <div className="rounded-2xl bg-white/5 border border-white/10 text-center py-10 px-4">
+            <div className="text-[13px] font-semibold">Nothing logged yet</div>
+            <div className="text-[12px] text-white/60 mt-1">Tap + to feed your buddy and level up.</div>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="rounded-2xl overflow-hidden bg-white/5 border border-white/10">
             {entries.slice().reverse().map((e) => (
               <EntryRow key={e.id} entry={e} onDelete={() => removeEntry(e.id)} />
             ))}
@@ -140,12 +161,14 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
         )}
       </div>
 
+      {/* FAB */}
       <button
         onClick={() => setModal(true)}
-        className="pressable fixed bottom-24 right-1/2 translate-x-[185px] bg-accent text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl shadow-accent/40 active:scale-90"
+        className="pressable fixed bottom-24 right-1/2 translate-x-[185px] w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl"
+        style={{ background: 'linear-gradient(135deg, #a78bfa, #ec4899)', boxShadow: '0 12px 36px -8px rgba(168,139,250,0.6)' }}
         aria-label="Add protein"
       >
-        <Plus size={26} />
+        <Plus size={26} strokeWidth={2.6}/>
       </button>
 
       <AddProteinModal
@@ -160,20 +183,20 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
 }
 
 function Confetti({ seed }) {
-  const colors = ['#5b8dee', '#fbbf24', '#86efac', '#a78bfa', '#fb923c', '#f472b6'];
-  // generate 24 pieces with random trajectories
-  const pieces = useMemo(() => Array.from({ length: 24 }, (_, i) => {
-    const angle = (Math.PI * 2 * i) / 24 + Math.random() * 0.4;
-    const dist = 110 + Math.random() * 70;
+  const colors = ['#a78bfa', '#ec4899', '#fde047', '#34d399', '#fb923c', '#60a5fa'];
+  const pieces = useMemo(() => Array.from({ length: 28 }, (_, i) => {
+    const angle = (Math.PI * 2 * i) / 28 + Math.random() * 0.35;
+    const dist = 120 + Math.random() * 90;
     return {
       dx: Math.cos(angle) * dist,
-      dy: Math.sin(angle) * dist - 30, // drift up
+      dy: Math.sin(angle) * dist - 30,
+      rot: (Math.random() * 720 - 360) + 'deg',
       bg: colors[i % colors.length],
-      delay: Math.random() * 80,
+      delay: Math.random() * 100,
     };
   }), [seed]); // eslint-disable-line
   return (
-    <div className="absolute inset-x-0 top-44 h-0 z-30 pointer-events-none flex justify-center">
+    <div className="absolute inset-x-0 top-56 h-0 z-30 pointer-events-none flex justify-center">
       <div className="relative">
         {pieces.map((p, i) => (
           <span key={i} className="confetti-piece"
@@ -181,6 +204,7 @@ function Confetti({ seed }) {
                   background: p.bg,
                   ['--dx']: `${p.dx}px`,
                   ['--dy']: `${p.dy}px`,
+                  ['--rot']: p.rot,
                   animationDelay: `${p.delay}ms`,
                 }}/>
         ))}
