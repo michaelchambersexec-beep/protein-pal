@@ -162,11 +162,12 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
       </div>
 
       {/* FAB — container-relative so it lands inside the 430px max-width on any viewport */}
-      <div className="fixed bottom-0 inset-x-0 pointer-events-none z-40" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-        <div className="max-w-app mx-auto relative h-0">
+      <div className="fixed inset-x-0 pointer-events-none z-40"
+           style={{ bottom: 'calc(env(safe-area-inset-bottom) + 5.5rem)' }}>
+        <div className="max-w-app mx-auto px-5 flex justify-end">
           <button
             onClick={() => setModal(true)}
-            className="pressable pointer-events-auto absolute right-5 -bottom-[6.25rem] w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl"
+            className="pressable pointer-events-auto w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl"
             style={{ background: 'linear-gradient(135deg, #a78bfa, #ec4899)', boxShadow: '0 12px 36px -8px rgba(168,139,250,0.6)' }}
             aria-label="Add protein"
           >
