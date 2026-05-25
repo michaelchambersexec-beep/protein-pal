@@ -1,7 +1,7 @@
 import React from 'react';
 
-// 16-bit pixel art bodybuilder. Each stage = its own sprite grid.
-// Characters are rendered as <rect> "pixels" with shape-rendering: crispEdges.
+// Pixel-art bodybuilder sprites, redrawn cleaner.
+// Face = 1-pixel eyes + tiny mouth so it never looks like a beard.
 
 export const STAGES = [
   { id: 0, name: 'Lil Egg',       quote: 'zzz... feed me',     hero: 'bg-hero-stage-0' },
@@ -23,7 +23,7 @@ export function getStage(pct) {
   return 0;
 }
 
-export default function Character({ pct = 0, size = 156 }) {
+export default function Character({ pct = 0, size = 160 }) {
   const stage = getStage(pct);
   const meta = STAGES[stage];
   return (
@@ -47,9 +47,9 @@ export default function Character({ pct = 0, size = 156 }) {
 
 function Sparkles() {
   const positions = [
-    { x: '6%',  y: '12%', size: 11, delay: 0    },
-    { x: '86%', y: '14%', size: 9,  delay: 400  },
-    { x: '92%', y: '64%', size: 13, delay: 800  },
+    { x: '4%',  y: '12%', size: 11, delay: 0    },
+    { x: '88%', y: '14%', size: 9,  delay: 400  },
+    { x: '92%', y: '64%', size: 12, delay: 800  },
     { x: '2%',  y: '58%', size: 10, delay: 1200 },
   ];
   return (
@@ -64,7 +64,6 @@ function Sparkles() {
   );
 }
 
-// ---------- Pixel renderer ----------
 function PixelSprite({ stage }) {
   const { grid, palette } = SPRITES[stage];
   const h = grid.length;
@@ -85,241 +84,241 @@ function PixelSprite({ stage }) {
   );
 }
 
-// Shared palette codes — overridden per stage where needed.
-const BASE_PALETTE = {
-  ' ': null,
-  '.': null,
-  k: '#1a0f1a',  // outline (near-black)
+// Palette — one solid color per code, designed to read at small sizes.
+const P = {
+  ' ': null, '.': null,
+  k: '#1a0f1a',  // outline
   s: '#e1ad7b',  // skin mid
   S: '#f4cda3',  // skin highlight
   d: '#a06a3d',  // skin shadow
   H: '#3a2417',  // hair brown
-  h: '#1f130a',  // hair shadow
   T: '#1e3a8a',  // trunks navy (default)
   t: '#152768',  // trunks shadow
-  W: '#ffffff',  // eye white
+  W: '#ffffff',  // white
+  e: '#1a0f1a',  // eye pupil (= outline color)
+  P: '#fb7185',  // cheek blush
+  c: '#f9d5b0',  // shell light
+  C: '#fef2e6',  // shell highlight
   r: '#dc2626',  // red
   y: '#facc15',  // gold
-  Y: '#fde68a',  // light gold
-  g: '#9ca3af',  // metal
-  G: '#4b5563',  // metal dark
+  Y: '#fde68a',  // gold highlight
+  g: '#cbd5e1',  // metal light
+  G: '#475569',  // metal dark
   F: '#fb923c',  // flame
   f: '#dc2626',  // flame dark
   L: '#fde047',  // lightning
-  P: '#fb7185',  // cheek blush
-  c: '#f9c2a0',  // diaper white-pink
-  C: '#fef2e6',  // shell
-  e: '#4a2a17',  // eye pupil brown
+  Z: '#cbd5e1',  // soft white for z's
 };
 
 const SPRITES = [
-  // ============ STAGE 0 — Sleepy egg with face ============
+  // ============================== STAGE 0 ==============================
+  // Sleepy egg — clean rounded shell, small skin face patch, dot eyes + tiny mouth, "z" letters
   {
-    palette: { ...BASE_PALETTE, T: '#fef2e6', t: '#e5c8a8' },
+    palette: P,
     grid: [
-      '......kkkkkk....',
-      '.....kCCCCCCk...',
-      '....kCCCCCCCCk..',
-      '....kCsssssCCk..',
-      '....kCkkskkCCk..',  // closed eyes (zigzag lashes)
-      '....kCssssssCk..',
-      '....kCsPPsPPCk..',  // cheek blush
-      '....kCssssssCk..',
-      '.....kCsWWsCk...',  // tiny smile
-      '.....kCCCCCk....',
-      '....kCCCCCCCk...',
-      '...kCCCCCCCCCk..',
-      '...kCCCCCCCCCk..',  // egg body
-      '...kCCCCCCCCCk..',
-      '....kCCCCCCCk...',
+      '.....kkkkkk.....',
+      '....kCCCCCCk....',
+      '...kCccccccCk...',
+      '...kCsssssscCk..',  // top of face
+      '..kCcseseseccCk.',  // eye dots (e at cols 4 and 7)
+      '..kCcssssssccCk.',
+      '..kCcssPWPsccCk.',  // small mouth + cheek hints
+      '..kCccccccccCCk.',
+      '..kCCccccccccCk.',  // egg lower body
+      '..kCCccccccccCk.',
+      '..kCCcccccccCk..',
+      '...kCCcccccCk...',
+      '....kCCCCCCk....',
       '.....kkkkkk.....',
     ],
   },
-  // ============ STAGE 1 — Newbie (skinny kid) ============
+
+  // ============================== STAGE 1 ==============================
+  // Newbie — small skinny kid with messy hair, sky trunks
   {
-    palette: { ...BASE_PALETTE, H: '#a0522d', T: '#0891b2', t: '#0e7490' },
+    palette: { ...P, T: '#0891b2', t: '#0e7490' },
     grid: [
-      '.....kkkkkk.....',
+      '......kkkk......',
+      '.....kHHHHk.....',
       '....kHHHHHHk....',
-      '...kHHHHHHHHk...',
-      '...kHsssssHHk...',
-      '...kHsWeWsHHk...',  // eyes (W white, e pupil)
-      '...kHsssssHHk...',
-      '....kssPPsk.....',  // cheek
-      '....kssWWsk.....',  // mouth
+      '....kHsssHHk....',
+      '....ksesesHk....',  // eyes
+      '....kssssssk....',
+      '....kssWssk.....',  // small smile
       '.....kkkkk......',
-      '......ksk.......',  // neck
-      '.....ksssk......',  // narrow shoulders
-      '....kssssk......',  // skinny body
-      '....kssssk......',
-      '....kssssk......',
-      '....kssssk......',
+      '......ksk.......',
+      '.....kssk.......',  // narrow shoulders
+      '....ksssssk.....',  // chest
+      '....ksssssk.....',
+      '....ksssssk.....',
       '....kTTTTTk.....',  // trunks
       '....kTtttTk.....',
-      '....kss.ssk.....',  // legs split
+      '....kss.ssk.....',  // legs
       '....kss.ssk.....',
-      '....kss.ssk.....',
-      '.....kk.kk......',
+      '.....k...k......',
     ],
   },
-  // ============ STAGE 2 — Getting there (small muscles) ============
+
+  // ============================== STAGE 2 ==============================
+  // Getting there — slightly wider, green trunks, hint of pec shading
   {
-    palette: { ...BASE_PALETTE, H: '#92400e', T: '#16a34a', t: '#15803d' },
+    palette: { ...P, T: '#16a34a', t: '#15803d' },
     grid: [
-      '.....kkkkkk.....',
+      '......kkkk......',
+      '.....kHHHHk.....',
       '....kHHHHHHk....',
-      '...kHHHHHHHHk...',
-      '...kHsssssHHk...',
-      '...kHsWeWsHHk...',
-      '...kHsssssHHk...',
+      '....kHsssHHk....',
+      '....ksesesHk....',
       '....kssssssk....',
-      '....ksssWssk....',  // smile starting
-      '.....kkkkkk.....',
-      '......kssk......',
-      '...kkkksskkkk...',  // shoulders forming
-      '..kSSsssssSSk...',
-      '..kSSdsssdSSk...',  // chest with shadow lines
-      '..kSdsssssdSk...',
-      '...kssssssk.....',
-      '....ksssssk.....',  // narrow waist
-      '....ksdsdsk.....',  // hint of abs
+      '....kssWssk.....',
+      '.....kkkkk......',
+      '......ksk.......',
+      '....kkkkkkkk....',  // wider shoulders
+      '...kSssssssSk...',
+      '...kSsdssdsSk...',  // pec shadow lines
+      '...kSssssssSk...',
+      '....kssssssk....',
+      '....ksdsdsk.....',  // hint abs
       '....kTTTTTk.....',
       '....kTtttTk.....',
       '....kss.ssk.....',
       '....kss.ssk.....',
-      '.....kk.kk......',
+      '.....k...k......',
     ],
   },
-  // ============ STAGE 3 — Buff Bro (classic double bicep flex) ============
+
+  // ============================== STAGE 3 ==============================
+  // Buff Bro — classic double bicep flex, navy trunks, red headband
   {
-    palette: { ...BASE_PALETTE, H: '#3a2417', T: '#1e3a8a', t: '#152768' },
+    palette: { ...P, T: '#1e3a8a', t: '#152768' },
     grid: [
+      '.......kkkkkk...',
+      '......kHHHHHHk..',
+      '.....kHHHHHHHHk.',
+      '....kHrrrrrrrrk.',  // red headband across forehead
+      '....kHsssssssHk.',
+      '....kHseseseHk..',  // eyes
+      '....kHsssssssk..',
+      '.....kssWWWss...',  // smile
       '......kkkkkk....',
-      '.....kHHHHHHk...',
+      '.......kssk.....',
+      '....kkkkkkkkk...',  // upper traps
+      '.kkkSsssssssSkkk',  // FLEXED arms outward
+      'kSSsSSSkkkSSSsSSk', // arms wide + chest top
+      'kSSdSSdkdSSSdSSk',  // bicep peaks
+      '.kSSdkSSSSSkdSSk',  // bicep curve down
+      '..kSSdSSSSSSdSk.',  // forearm down
+      '...kkSSSSSSSkk..',  // chest
+      '...kSdsdsdsdSk..',  // 6-pack
+      '...kSdsdsdsdSk..',
+      '....kkkkkkkk....',
+      '....kTTTTTTk....',
+      '....kTttttTk....',
+      '....kss..ssk....',
+      '....kss..ssk....',
+      '.....k....k.....',
+    ],
+  },
+
+  // ============================== STAGE 4 ==============================
+  // Mega Lifter — overhead press with barbell
+  {
+    palette: { ...P, T: '#6d28d9', t: '#4c1d95' },
+    grid: [
+      'GGGG........GGGG',  // dumbbell weights
+      'GggGkkkkkkkkGgGG',  // bar across
+      'GGGG........GGGG',
+      '....kss....ssk..',  // arms stretched up
+      '....ksSk..kSsk..',
+      '....ksSk..kSsk..',
+      '....ksSk..kSsk..',
+      '....kkkk..kkkk..',
+      '......kHHHHk....',
       '....kHHHHHHHHk..',
       '....kHsssssHHk..',
-      '....kHsWeWsHHk..',
-      '....kHsssksssk..',  // nose hint
+      '....kHseseseHk..',
+      '....kHsssssHHk..',
       '....kssssssssk..',
-      '.....kssWWssk...',  // smile
+      '.....kssWWss....',  // gritted teeth smile
+      '......kkkkkk....',
+      '....kkkkkkkkk...',  // huge shoulders
+      '...kSSsssssSSk..',
+      '...kSdsLLLsdSk..',  // L = lightning glow chest
+      '...kSdssSSssdk..',
+      '...kSdsdsdsdSk..',  // 8-pack
+      '...kSdsdsdsdSk..',
+      '....kkkkkkkk....',
+      '....kTTTTTTk....',
+      '....kTttttTk....',
+      '....kss..ssk....',
+      '....kss..ssk....',
+      '.....k....k.....',
+    ],
+  },
+
+  // ============================== STAGE 5 ==============================
+  // Champion — gold crown, red cape, gold trunks
+  {
+    palette: { ...P, T: '#facc15', t: '#a16207' },
+    grid: [
+      '....kyykyykyyk..',  // crown spikes
+      '....kyYykYrYykk.',  // gem in middle
+      '.....kyyyyyyyk..',
+      '......kHHHHHk...',
+      '....kHHHHHHHHk..',
+      '....kHsssssHHk..',
+      '....kHseseseHk..',
+      '....kHsssssHHk..',
+      '....kssssssssk..',
+      '.....kssWWWss...',  // big smile
       '......kkkkkk....',
       '.......kssk.....',
-      '....kkkkkkkk....',  // upper traps
-      '.kkksSSsssSSskk.',  // shoulders FLEXED OUT
-      'kSSsSSskkSSsSSSk',  // bicep peaks both sides
-      'kSdsSSdkdSSsSdSk',  // bicep with shadow lines
-      'kSdsSdkrrkdSsdSk',  // (r = red headband sweatband on inner)
-      '.kSSdkSSSSkdSSk.',  // forearm tapering
-      '..kssdSSSSdsk...',
-      '...kssSSSSssk...',  // chest
-      '...kSdsdsdSk....',  // abs!
-      '...kSdsdsdSk....',
-      '....kkkkkkk.....',  // waist
-      '....kTTTTTk.....',
-      '....kTtttTk.....',
-      '....kss.ssk.....',
-      '....kss.ssk.....',
-      '....kssdssk.....',  // leg muscle hint
-      '.....kk.kk......',
+      'rkkkkkkkkkkkkkr.',  // red cape across shoulders
+      'rSSsssssssssSSr.',
+      'rSdsSSSSSSSSdSr.',  // chest with cape sides
+      '.kSdSSSSSSSSdk..',
+      '..kSdsSSSSsdSk..',
+      '...kSdsdsdsdk...',
+      '...kSdsdsdsdk...',
+      '....kkkkkkkk....',
+      '....kTTTTTTk....',
+      '....kTttttTk....',
+      '....kss..ssk....',
+      '....kss..ssk....',
+      '.....k....k.....',
     ],
   },
-  // ============ STAGE 4 — Mega Lifter (overhead press with dumbbell) ============
+
+  // ============================== STAGE 6 ==============================
+  // BEAST MODE — horns, mohawk, glowing eyes, red trunks, flame aura
   {
-    palette: { ...BASE_PALETTE, H: '#3a2417', T: '#6d28d9', t: '#4c1d95' },
+    palette: { ...P, T: '#dc2626', t: '#7f1d1d', H: '#1a0f1a', e: '#facc15' },
     grid: [
-      'gggk.......kggg',  // dumbbell weights
-      'gGgk.......kgGg',
-      'gggk.......kggg',
-      '.kk.........kk.',
-      '..k...........k',
-      '..k.kkkkkk....k',  // bar
-      '..k.kHHHHk....k',
-      '....kHHHHHHk....',
-      '....kHsssssHk...',
-      '....kHsWeWsHk...',
-      '....kHsssssHk...',
-      '....kssssssk....',
-      '.....kssWWk.....',  // gritted teeth
-      '......kkkk......',
-      '.kkkkkkkkkkkkk..',  // wide shoulders pressing up
-      'kSSSsSSSSsSSSsk',
-      'kSdsSdsssSdsSdk',  // big delts
-      'kSdsSsLLLsSsSdk',  // L = lightning glow on chest
-      '.kSdsSSSSsSsdk.',
-      '..kssSSSSSSsk..',
-      '..kSdsdsdsdSk..',  // 6-pack
-      '..kSdsdsdsdSk..',
-      '...kkkkkkkkk...',
-      '...kTTTTTTTk...',
-      '...kTttttttk...',
-      '...kss...ssk...',
-      '...kss...ssk...',
-      '....kk...kk....',
-    ],
-  },
-  // ============ STAGE 5 — Champion (crown, gold trunks, cape) ============
-  {
-    palette: { ...BASE_PALETTE, H: '#3a2417', T: '#facc15', t: '#a16207', r: '#dc2626' },
-    grid: [
-      '...kyyykkkyyyk..',  // crown spikes
-      '...kyYyrkrYyyk..',  // crown with red gem
-      '....kkyyyyykk...',
-      '....kHHHHHHHk...',
-      '...kHHsssssHk...',
-      '...kHsWeWssHk...',
-      '...kHsssssHHk...',
-      '....kssssssk....',
-      '.....kssWWk.....',  // big smile
-      '......kkkk......',
-      '.......kssk.....',
-      'rkkkkkkkkkkkkkkr',  // cape edge across shoulders
-      'rkSSsssSSsssSSkr',
-      'rkSdsSSSSSSdSdkr',  // chest + cape sides
-      'rkSdsSSrrSSsSdkr',  // r = red trim of cape
-      '.kSSdSSSSSdSSk..',
-      '..kssSSSSSSsk...',
-      '..kSdsdsdsdSk...',
-      '..kSdsdsdsdSk...',
-      '...kkkkkkkkk....',
-      '...kTTTyTTTk....',  // gold trunks with sash
-      '...kTttytttk....',
-      '....kss.ssk.....',
-      '....kss.ssk.....',
-      '....kssdssk.....',
-      '.....kk.kk......',
-    ],
-  },
-  // ============ STAGE 6 — BEAST MODE (red trunks, horns, flame aura) ============
-  {
-    palette: { ...BASE_PALETTE, H: '#1a0f1a', T: '#dc2626', t: '#7f1d1d', e: '#fef08a' },
-    grid: [
-      '.k.....FF.....k.',  // horns + flame tip
-      'kkk...FfFF...kkk',
-      '.k...FfffF....k.',
-      'F.k.kHHHHHHk.k.F',  // flame aura sides
-      'Ff.kHHkkkkHHk.fF',  // mohawk hair
-      'fFkHsssssssHkFf.',
-      'Ff.kHsWeWesHk.fF',  // glowing eye whites with yellow pupil
-      'Ff..kHsssssHk.fF',
-      'Ff..kssPPPssk.fF',
-      'Ff...kkkLLkk..fF',  // lightning teeth/snarl
-      'Ff....kssk....fF',
-      'F.kkkkkkkkkkkk.F',  // mega traps
-      'kSSSSsssssSSSSSk',
-      'kSdsdSSSSSdsdSdk',  // MAX size shoulders
-      'kSdsdSrrrrSdsSdk',  // red chest stripes
-      'kSdsSSLLLLSSdSdk',  // big chest with lightning
-      '.kSdSSSSSSSSdSk.',
-      '..kssSSSSSSSSk..',
-      '..kSdsdsdsdsdk..',  // 8-pack abs!
-      '..kSdsdsdsdsdk..',
-      '..kSdsdsdsdsdk..',
-      '...kkkkkkkkkk...',
-      '...kTTTLLTTTTk..',  // red trunks with lightning
-      '...kTtttttttk...',
-      '...kss....ssk...',
-      '...kss....ssk...',
-      '....kk....kk....',
+      'F.k.....kk.....kF',  // horns peeking
+      'FkkF.kHHHHHHk.FkkF',
+      '.F.F.kHHHHHHHHk.F.F',  // mohawk
+      'F.FFkHsssssssHk.FFF',  // flame aura on sides
+      'fF..kHseseseseHk..Ff',  // glowing yellow eyes (e -> #facc15)
+      'fF..kssssssssssk..Ff',
+      'fF...kssLLLLssk...Ff',  // L lightning teeth/snarl
+      'Ff....kkkkkkkk....Ff',
+      'Ff.....kssssk.....Ff',
+      'Ff.kkkkkkkkkkkkk.Ff.',  // huge yoke
+      'F.kSSSsssssSSSSk.F..',
+      'F.kSdsdSSSSSdsdSk.F.',  // mass shoulders
+      'F.kSdsrSSSSrSdsSk.F.',  // red chest stripes
+      '..kSdsSLLLLSSdsSk...',  // big chest + lightning
+      '...kSdSSSSSSSSdk....',
+      '....kssSSSSSSsk.....',
+      '....kSdsdsdsdSk.....',  // 8-pack abs
+      '....kSdsdsdsdSk.....',
+      '....kSdsdsdsdSk.....',
+      '.....kkkkkkkk.......',
+      '.....kTTTLLTTk......',  // red trunks with lightning
+      '.....kTttttttk......',
+      '.....kss..ssk.......',
+      '.....kss..ssk.......',
+      '......k....k........',
     ],
   },
 ];

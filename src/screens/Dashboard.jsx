@@ -146,7 +146,7 @@ export default function Dashboard({ state, update, onOpenSettings, storageWarnin
             <div className="text-[12px] text-white/60 mt-1">Tap + to feed your buddy and level up.</div>
           </div>
         ) : (
-          <div className="rounded-2xl overflow-hidden bg-white/5 border border-white/10">
+          <div className="rounded-2xl overflow-hidden border border-white/10">
             {entries.slice().reverse().map((e) => (
               <EntryRow key={e.id} entry={e} onDelete={() => removeEntry(e.id)} />
             ))}

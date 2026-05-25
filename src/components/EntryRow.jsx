@@ -42,8 +42,12 @@ export default function EntryRow({ entry, onDelete }) {
         <Trash size={18}/>
       </button>
       <div
-        className="relative flex items-center gap-3 px-4 py-3.5 bg-transparent"
-        style={{ transform: `translateX(${dx}px)`, transition: swiping.current ? 'none' : 'transform 220ms cubic-bezier(0.34,1.56,0.64,1)' }}
+        className="relative flex items-center gap-3 px-4 py-3.5"
+        style={{
+          background: 'oklch(0.16 0.025 280)',
+          transform: `translateX(${dx}px)`,
+          transition: swiping.current ? 'none' : 'transform 220ms cubic-bezier(0.34,1.56,0.64,1)',
+        }}
         onTouchStart={onStart} onTouchMove={onMove} onTouchEnd={onEnd} onTouchCancel={onEnd}
         onMouseDown={onStart} onMouseMove={onMove} onMouseUp={onEnd} onMouseLeave={onEnd}
         onClick={onRowClick}
